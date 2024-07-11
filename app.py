@@ -37,7 +37,6 @@ numero_artistas = st.sidebar.slider("Número de artistas", 1, 50, 10, key="artis
 numero_canciones = st.sidebar.slider("Número de canciones", 1, 50, 10, key="canciones")
 
 if pestaña == "Inicio":
-    st.subheader("Investigación exhaustiva para decidir en qué propiedades y barrios es más rentable invertir")
     cols = st.columns(2)
     with cols[0]:
         pass
@@ -81,7 +80,7 @@ elif pestaña == "Distribución variables":
         st.pyplot(plt)
 
 elif pestaña == "Popularidad":
-    tabsPrecio = st.tabs([f"Top {numero_artistas} Artistas", "Bailable", "Género", "Según barrio"])
+    tabsPrecio = st.tabs([f"Top Artistas y Canciones", "Bailable", "Género", "Energía", "Positividad"])
     with tabsPrecio[0]:
         df['genre'] = df['genre'].apply(lambda x: x.capitalize())
         artist_info = df.groupby('artist_name').agg({
@@ -104,6 +103,26 @@ elif pestaña == "Popularidad":
                         })
         fig.update_traces(hovertemplate='Artista: %{label}<br>Popularidad Media: %{value:.2f}<br>Género(s): %{customdata[0]}')
         st.plotly_chart(fig)
+
+        cols = st.columns(2)
+        with cols[0]:
+            fig = px.histogram(df, x='mode', y="popularity", title='Media de la popularidad en base al modo'
+            , labels={"popularity": "Popularidad", "mode": "Modo"}
+            , histfunc="avg")
+            st.plotly_chart(fig)
+        with cols[1]:
+            fig = px.histogram(df, x='key', y="popularity", title='Media de la popularidad en base a la escala de la canción'
+            , labels={"popularity": "Popularidad", "key": "Escala"}
+            , color="key"
+            , histfunc="avg"
+            , category_orders={"key": ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]})
+            st.plotly_chart(fig)
+
+        df_aux = df.sort_values(by='popularity', ascending=False).head(numero_canciones)
+        fig = px.parallel_categories(df_aux, dimensions=['genre', 'key', 'mode', 'popularity'], color="popularity", color_continuous_scale=px.colors.sequential.Agsunset
+                                    , title=f'Top {numero_canciones} canciones y su camino hacia la popularidad')
+        st.plotly_chart(fig)
+
     with tabsPrecio[1]:
         # Graficar las canciones más populares y su danceability
         df_aux = df.sort_values(by='popularity', ascending=False).head(numero_canciones)
@@ -122,9 +141,25 @@ elif pestaña == "Popularidad":
         fig.update_xaxes(categoryorder="total ascending", tickangle=-35, title_standoff=0)
         st.plotly_chart(fig)
     with tabsPrecio[3]:
-        pass
+        fig = px.histogram(df, x='popularity', y="energy", title='Media de la energía en base a la popularidad según el año'
+        ,labels={"popularity": "Popularidad", "energy": "Energía", "year": "Año"}
+        ,animation_frame="year"
+        ,category_orders={"year": [2000, 2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023]}
+        ,range_y=[0, 1]
+        ,range_x=[0, 100]
+        ,histfunc="avg")
+        st.plotly_chart(fig)
+    with tabsPrecio[4]:
+        fig = px.histogram(df, x='popularity', y="valence", title='Media de la positividad en base a la popularidad según el año'
+        ,labels={"popularity": "Popularidad", "valence": "Positividad", "year": "Año"}
+        ,animation_frame="year"
+        ,category_orders={"year": [2000, 2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023]}
+        ,range_y=[0, 1]
+        ,range_x=[0, 100]
+        ,histfunc="avg")
+        st.plotly_chart(fig)
 elif pestaña == "Características de la canción":
-    tabsVecindario = st.tabs(["Artistas", "Volumen", "Disponibilidad", "Según puntuación de ubicación"])
+    tabsVecindario = st.tabs(["Artistas", "Volumen", "Tempo", "Según puntuación de ubicación"])
     with tabsVecindario[0]:
         # Grafico artistas con mas canciones
         df_aux = df
@@ -155,10 +190,15 @@ elif pestaña == "Características de la canción":
         for trace in box.data:
             fig.add_trace(go.Box(x=trace['x'], boxmean=True, marker_color="#148F77"))
         fig.update_layout(xaxis_title='Loudness', yaxis_title='Energy', showlegend=False)
-
         st.plotly_chart(fig)
+
     with tabsVecindario[2]:
-        pass
+        df_aux = clean_outliers(df, ['tempo'])
+        fig = px.histogram(df_aux, x='tempo', y='danceability', title=f'Bailabilidad en base al tempo de las canciones'
+                , hover_data=["artist_name", "popularity"]
+                , labels={"danceability": "Danceability", "track_name": "Canción", "artist_name": "Artista", "popularity": "Popularidad"}
+                , histfunc="avg")
+        st.plotly_chart(fig)
     with tabsVecindario[3]:
         pass    
 elif pestaña == "Importancia del rating":
@@ -166,55 +206,16 @@ elif pestaña == "Importancia del rating":
     components.html(codigo_iframe, width=1320, height=1250)
 
 
-# cols = st.columns(2)
-#         with cols[0]:
-#             pass
-#         with cols[1]:
-#             pass
 
 
 
 
 
 
-df_aux = clean_outliers(df, ['tempo'])
-fig = px.histogram(df_aux, x='tempo', y='danceability', title=f'Tempo vs Danceability'
-        , hover_data=["artist_name", "popularity"]
-        , labels={"danceability": "Danceability", "track_name": "Canción", "artist_name": "Artista", "popularity": "Popularidad"}
-        , histfunc="avg")
-st.plotly_chart(fig)
 
-fig = px.histogram(df, x='popularity', y="energy", title='Media de la energía en base a la popularidad según el año'
-        , labels={"popularity": "Popularidad", "energy": "Energía", "year": "Año"}
-        , animation_frame="year"
-        , category_orders={"year": [2000, 2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023]}
-        , range_y=[0, 1]
-        , range_x=[0, 100]
-        , histfunc="avg")
-st.plotly_chart(fig)
 
-fig = px.histogram(df, x='popularity', y="valence", title='Media de la positividad en base a la popularidad según el año'
-        , labels={"popularity": "Popularidad", "valence": "Positividad", "year": "Año"}
-        , animation_frame="year"
-        , category_orders={"year": [2000, 2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023]}
-        , range_y=[0, 1]
-        , range_x=[0, 100]
-        , histfunc="avg")
-st.plotly_chart(fig)
 
-fig = px.histogram(df, x='mode', y="popularity", title='Media de la popularidad en base al modo'
-            , labels={"popularity": "Popularidad", "mode": "Modo"}
-            , histfunc="avg")
-st.plotly_chart(fig)
 
-fig = px.histogram(df, x='key', y="popularity", title='Media de la popularidad en base al modo'
-            , labels={"popularity": "Popularidad", "mode": "Modo"}
-            , color="key"
-            , histfunc="avg")
-st.plotly_chart(fig)
 
-df_aux = df.sort_values(by='popularity', ascending=False).head(numero_canciones)
-fig = px.parallel_categories(df_aux, dimensions=['genre', 'key', 'mode', 'popularity'], color="popularity", color_continuous_scale=px.colors.sequential.Agsunset)
-st.plotly_chart(fig)
 
 
