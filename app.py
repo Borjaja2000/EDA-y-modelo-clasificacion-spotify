@@ -3,13 +3,9 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 import matplotlib.pyplot as plt
-import pydeck as pdk
 import seaborn as sns
 import plotly.graph_objects as go
 
-import folium
-from folium.plugins import FastMarkerCluster
-from streamlit_folium import st_folium
 import streamlit.components.v1 as components
 
 logo = 'spotify.png'
