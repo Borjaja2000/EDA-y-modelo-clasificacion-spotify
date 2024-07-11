@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 import matplotlib.pyplot as plt
-# import seaborn as sns
+import seaborn as sns
 import plotly.graph_objects as go
 
 import streamlit.components.v1 as components
@@ -69,12 +69,11 @@ elif pestaña == "Distribución variables":
         st.pyplot(fig)
 
     with tabsInicio[1]:
-        pass
-        # corr_matrix = df.corr(method='spearman', numeric_only=True)
-        # plt.figure(figsize=(8, 6))
-        # sns.heatmap(corr_matrix, annot=True, fmt=".2f", cmap='coolwarm', vmin=-1, vmax=1)
-        # plt.title('Mapa de calor de la Correlación de Spearman')
-        # st.pyplot(plt)
+        corr_matrix = df.corr(method='spearman', numeric_only=True)
+        plt.figure(figsize=(8, 6))
+        sns.heatmap(corr_matrix, annot=True, fmt=".2f", cmap='coolwarm', vmin=-1, vmax=1)
+        plt.title('Mapa de calor de la Correlación de Spearman')
+        st.pyplot(plt)
 
 elif pestaña == "Popularidad":
     tabsPrecio = st.tabs([f"Top Artistas y Canciones", "Bailable", "Género", "Energía", "Positividad"])
