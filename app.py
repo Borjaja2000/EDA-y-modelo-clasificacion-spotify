@@ -8,7 +8,7 @@ import plotly.graph_objects as go
 
 import streamlit.components.v1 as components
 
-logo = 'spotify.png'
+logo = 'imagenes/spotify.png'
 st.set_page_config(page_title="Spotify", page_icon=logo ,layout="wide") #configuración de la página
 #Funciones
 @st.cache_data(ttl=3600)
