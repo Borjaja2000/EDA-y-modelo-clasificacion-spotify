@@ -29,8 +29,7 @@ df = cargar_datos()
 st.title("Análisis exploratorio de canciones de Spotify")
 st.sidebar.title("Opciones de la tabla")
 pestaña = st.sidebar.radio("Selecciona una pestaña:", ("Inicio", "Distribución variables", "Popularidad", "Características de la canción", "Importancia del rating"))
-numero_artistas = st.sidebar.slider("Número de artistas", 1, 50, 10, key="artistas")
-numero_canciones = st.sidebar.slider("Número de canciones", 1, 50, 10, key="canciones")
+
 
 if pestaña == "Inicio":
     cols = st.columns(2)
@@ -42,11 +41,16 @@ if pestaña == "Inicio":
 elif pestaña == "Distribución variables":
     tabsInicio = st.tabs(["Variables continuas", "Correlación de Spearman"])
     with tabsInicio[0]:
-        st.image('distribucion.png')
+        st.image('imagenes/distribucion.png')
     with tabsInicio[1]:
-        st.image('spearman.png')
+        st.image('imagenes/spearman.png')
 
 elif pestaña == "Popularidad":
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("### Configuración")
+    numero_artistas = st.sidebar.slider("Número de artistas", 1, 50, 10, key="artistas")
+    numero_canciones = st.sidebar.slider("Número de canciones", 1, 50, 10, key="canciones")
+
     tabsPrecio = st.tabs([f"Top Artistas y Canciones", "Bailable", "Género", "Energía", "Positividad"])
     with tabsPrecio[0]:
         df['genre'] = df['genre'].apply(lambda x: x.capitalize())
@@ -70,11 +74,11 @@ elif pestaña == "Popularidad":
 
         cols = st.columns(2)
         with cols[0]:
-            with open("modopopularidad.html", "r", encoding="utf-8") as f:
+            with open("html/modopopularidad.html", "r", encoding="utf-8") as f:
                 html_content = f.read()
             st.components.v1.html(html_content, height=600)
         with cols[1]:
-            with open("escalapopularidad.html", "r", encoding="utf-8") as f:
+            with open("html/escalapopularidad.html", "r", encoding="utf-8") as f:
                 html_content = f.read()
             st.components.v1.html(html_content, height=600)
 
@@ -96,18 +100,21 @@ elif pestaña == "Popularidad":
         st.plotly_chart(fig)
     with tabsPrecio[2]:
         #Histograma de popularidad media por género y año
-        with open("popularidadgeneros.html", "r", encoding="utf-8") as f:
+        with open("html/popularidadgeneros.html", "r", encoding="utf-8") as f:
             html_content = f.read()
         st.components.v1.html(html_content, height=700)
     with tabsPrecio[3]:
-        with open("energiapopularidad.html", "r", encoding="utf-8") as f:
+        with open("html/energiapopularidad.html", "r", encoding="utf-8") as f:
             html_content = f.read()
         st.components.v1.html(html_content, height=700)
     with tabsPrecio[4]:
-        with open("positividadpopularidad.html", "r", encoding="utf-8") as f:
+        with open("html/positividadpopularidad.html", "r", encoding="utf-8") as f:
             html_content = f.read()
         st.components.v1.html(html_content, height=700)
 elif pestaña == "Características de la canción":
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("### Configuración")
+    numero_artistas = st.sidebar.slider("Número de artistas", 1, 50, 10, key="artistas")
     tabsVecindario = st.tabs(["Artistas", "Volumen", "Tempo"])
     with tabsVecindario[0]:
         # Grafico artistas con mas canciones
@@ -125,15 +132,15 @@ elif pestaña == "Características de la canción":
         fig.update_traces(hovertemplate='Artista: %{label}<br>Número de Canciones: %{value}')
         st.plotly_chart(fig)
     with tabsVecindario[1]:
-        with open("volumenenergia.html", "r", encoding="utf-8") as f:
+        with open("html/volumenenergia.html", "r", encoding="utf-8") as f:
             html_content = f.read()
         st.components.v1.html(html_content, height=700)
 
     with tabsVecindario[2]:
-        with open("tempobailable.html", "r", encoding="utf-8") as f:
+        with open("html/tempobailable.html", "r", encoding="utf-8") as f:
             html_content = f.read()
         st.components.v1.html(html_content, height=500)
-        st.image('tempobailable.png')  
+        st.image('imagenes/tempobailable.png')  
 elif pestaña == "Importancia del rating":
     codigo_iframe = ''''''
     components.html(codigo_iframe, width=1320, height=1250)
