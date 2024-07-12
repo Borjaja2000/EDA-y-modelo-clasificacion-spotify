@@ -28,7 +28,7 @@ df = cargar_datos()
 
 st.title("Análisis exploratorio de canciones de Spotify")
 st.sidebar.title("Opciones de la tabla")
-pestaña = st.sidebar.radio("Selecciona una pestaña:", ("Inicio", "Distribución variables", "Popularidad", "Características de la canción", "Importancia del rating"))
+pestaña = st.sidebar.radio("Selecciona una pestaña:", ("Inicio", "Distribución variables", "Popularidad", "Características de la canción", "Informe"))
 
 
 if pestaña == "Inicio":
@@ -141,6 +141,8 @@ elif pestaña == "Características de la canción":
             html_content = f.read()
         st.components.v1.html(html_content, height=500)
         st.image('imagenes/tempobailable.png')  
-elif pestaña == "Importancia del rating":
-    codigo_iframe = ''''''
+elif pestaña == "Informe":
+    codigo_iframe = '''<iframe title="spotify" width="1320" height="1250"
+    src="https://app.powerbi.com/view?r=eyJrIjoiMTk5Njg1NjYtYWI5OS00OTg4LTg4OGYtOTE4ZGM3OTFlNWUzIiwidCI6IjhhZWJkZGI2LTM0MTgtNDNhMS1hMjU1LWI5NjQxODZlY2M2NCIsImMiOjl9"
+    frameborder="0" allowFullScreen="true"></iframe>'''
     components.html(codigo_iframe, width=1320, height=1250)
